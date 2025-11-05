@@ -32,6 +32,12 @@
   ; END PROBLEM 16
 
 ;; Optional Problem 2
+(define (reverse expr)
+  (define (reverse-helper lst acc)
+    (if (null? lst)
+        acc
+        (reverse-helper (cdr lst) (cons (car lst) acc))))
+  (reverse-helper expr '()))
 
 ;; Returns a function that checks if an expression is the special form FORM
 (define (check-special form)
@@ -46,12 +52,12 @@
 (define (let-to-lambda expr)
   (cond ((atom? expr)
          ; BEGIN OPTIONAL PROBLEM 2
-         'replace-this-line
+         expr
          ; END OPTIONAL PROBLEM 2
          )
         ((quoted? expr)
          ; BEGIN OPTIONAL PROBLEM 2
-         'replace-this-line
+         expr
          ; END OPTIONAL PROBLEM 2
          )
         ((or (lambda? expr)
@@ -60,23 +66,29 @@
                (params (cadr expr))
                (body   (cddr expr)))
            ; BEGIN OPTIONAL PROBLEM 2
-           'replace-this-line
+           (cons form (cons params (map let-to-lambda body)))
            ; END OPTIONAL PROBLEM 2
            ))
         ((let? expr)
          (let ((values (cadr expr))
                (body   (cddr expr)))
            ; BEGIN OPTIONAL PROBLEM 2
-           'replace-this-line
+           (cons (cons 'lambda (cons (car (zip values)) (map let-to-lambda body))) (map let-to-lambda (cdr (zip values))))
            ; END OPTIONAL PROBLEM 2
            ))
         (else
          ; BEGIN OPTIONAL PROBLEM 2
-         'replace-this-line
+         (cons (car expr) (map let-to-lambda (cdr expr)))
          ; END OPTIONAL PROBLEM 2
          )))
 
 ; Some utility functions that you may find useful to implement for let-to-lambda
 
 (define (zip pairs)
-  'replace-this-line)
+  (define (zip-helper first second pairs)
+    (if (null? pairs) (cons (reverse first) (reverse second))
+        (zip-helper (cons (car (car pairs)) first) (cons (cadr (car pairs)) second) (cdr pairs)))
+        )
+  (zip-helper '() '() pairs))
+
+
